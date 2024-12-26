@@ -20,18 +20,10 @@ class BasePerceptron(ABC):
 
     def validate_input_vector(self, input_vector): 
         """ Ensures that the input is a one-dimensional numpy array of floats. Raises a ValueError if the input is not valid. """ 
-
-        # Check if input is a numpy array 
-        if not isinstance(input_vector, np.ndarray): 
-           raise ValueError("Input must be a numpy array!") 
     
         # Check if input is one-dimensional 
         if input_vector.ndim != 1: 
             raise ValueError("Input must be a one-dimensional vector!") 
-    
-        # Check if input contains only floats 
-        if not np.issubdtype(input_vector.dtype, float): 
-            raise ValueError("Input vector must contain only floating point values!")
     
         # Check if input is same size as specified in the perceptron
         if not input_vector.size == self.weights.size:
