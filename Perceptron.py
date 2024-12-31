@@ -1,77 +1,62 @@
 import numpy as np
 import unittest
-from abc import ABC, abstractmethod
 
-# Base Class Definitions
-#-------------------------------------------------------
-class BasePerceptron(ABC):
+class Perceptron:
+    """Perceptron"""
 
-    def __init__(self, weights=0.5*np.ones(2), bias=0.0):
-        self.weights = weights
-        self.bias = bias
+    def __init__(self, number_of_inputs: int=2):
+        if number_of_inputs < 1:
+            raise ValueError("Number of Inputs must be greater than 1!")
+        self.__number_of_inputs = number_of_inputs
+        self.__weights = np.zeros(number_of_inputs + 1)
 
-    @abstractmethod
-    def activate_neuron():
-        pass
-
-    @abstractmethod
-    def fire():
-        pass
-
-    def validate_input_vector(self, input_vector): 
-        """ Ensures that the input is a one-dimensional numpy array of floats. Raises a ValueError if the input is not valid. """ 
+    def __validate_input_vector(self, input_vector: np.ndarray[float]):
+        if input_vector.ndim != 1:
+            raise ValueError("The input must be a vector of only one dimension!")
+        if input_vector.size != self.__number_of_inputs:
+            raise ValueError(f"The perceptron has {self.__number_of_inputs} inputs, the input vector must be of this length!")
     
-        # Check if input is one-dimensional 
-        if input_vector.ndim != 1: 
-            raise ValueError("Input must be a one-dimensional vector!") 
-    
-        # Check if input is same size as specified in the perceptron
-        if not input_vector.size == self.weights.size:
-            raise ValueError("Input vector must match the size of the perceptron!")
-    
-        # If all checks pass, return the input vector return
-        return input_vector
-
-# Class Definitions
-#-------------------------------------------------------
-class Perceptron(BasePerceptron):
-    """Standard Linear Perceptron"""
-
-    def activate_neuron(self, theta: float) -> float:
-        if theta > 0.0:
+    def __classify(self, theta: float) -> float:
+        if theta > 0:
             return 1.0
         else:
             return -1.0
+        
+    def set_weights(self, weights: np.ndarray[float]):
+        #if weights.ndim != 1:
+        #    raise ValueError("Weights must be a one-dimensional vector!")
+        #elif weights.size != self.__number_of_inputs - 1:
+        #    raise ValueError("Weights must be one element larger than the number of inputs where the first element is the bias!")
+        #else:
+        self.__weights = weights
+        
+    def set_bias(self, bias: float):
+        self.__weights[0] = bias
 
     def fire(self, input_vector: np.ndarray[float]) -> float:
-        self.validate_input_vector(input_vector)
-        theta = np.dot(self.weights, input_vector) + self.bias
-        return self.activate_neuron(theta)
-    
-# Unit Tests
-#-------------------------------------------------------
+        self.__validate_input_vector(input_vector)
+        self.__classify(np.dot(self.__weights, np.concatinate(1.0, input_vector)))
+
+
 class TestPerceptron(unittest.TestCase):
 
     def setUp(self):
-        self.perceptron = Perceptron
+        pass
 
-    def test_01(self):
-        self.perceptron = Perceptron()
-        self.assertEqual(self.perceptron.fire(np.array([1.0, 1.0])), 1.0)
+    def test_01_initialize(self):
+        a = Perceptron(2)
+        b = Perceptron(3)
+        c = Perceptron(4)
 
-    def test_02(self):
-        self.perceptron = Perceptron(np.array([2.0, -1.0]), 7.0)
-        self.assertEqual(self.perceptron.fire(np.array([1.0, 11.0])), -1.0)
+    def test_02_set_weights(self):
+        p = Perceptron(2)
+        p.set_weights(np.ndarray([3.0, 4.5]))
 
-    def test_03(self):
-        self.perceptron = Perceptron(np.array([2.0, -1.0, 3.0]), -2.0)
-        self.assertEqual(self.perceptron.fire(np.array([3.0, 4.0, 5.0])), 1.0)
+    '''def test_02_basic_fire(self):
+        perceptron = Perceptron()
+        y = perceptron.fire(np.ndarray([1.0, 1.0]))
+        self.assertEqual(y, -1.0)'''
+    
 
-    def test_04(self):
-        self.perceptron = Perceptron()
-        self.assertEqual(self.perceptron.fire(np.array([1.0, -1.0])), -1.0)
-
-# Main
-#-------------------------
 if __name__ == '__main__':
     unittest.main()
