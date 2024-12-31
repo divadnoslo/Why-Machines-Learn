@@ -6,7 +6,7 @@ from abc import ABC, abstractmethod
 #-------------------------------------------------------
 class BasePerceptron(ABC):
 
-    def __init__(self, weights=np.ones(2), bias=0.0):
+    def __init__(self, weights=0.5*np.ones(2), bias=0.0):
         self.weights = weights
         self.bias = bias
 
@@ -38,7 +38,10 @@ class Perceptron(BasePerceptron):
     """Standard Linear Perceptron"""
 
     def activate_neuron(self, theta: float) -> float:
-        return theta
+        if theta > 0.0:
+            return 1.0
+        else:
+            return -1.0
 
     def fire(self, input_vector: np.ndarray[float]) -> float:
         self.validate_input_vector(input_vector)
@@ -54,15 +57,19 @@ class TestPerceptron(unittest.TestCase):
 
     def test_01(self):
         self.perceptron = Perceptron()
-        self.assertEqual(self.perceptron.fire(np.array([0.0, 0.0])), 0.0)
+        self.assertEqual(self.perceptron.fire(np.array([1.0, 1.0])), 1.0)
 
     def test_02(self):
         self.perceptron = Perceptron(np.array([2.0, -1.0]), 7.0)
-        self.assertEqual(self.perceptron.fire(np.array([3.0, 4.0])), 9.0)
+        self.assertEqual(self.perceptron.fire(np.array([1.0, 11.0])), -1.0)
 
     def test_03(self):
         self.perceptron = Perceptron(np.array([2.0, -1.0, 3.0]), -2.0)
-        self.assertEqual(self.perceptron.fire(np.array([3.0, 4.0, 5.0])), 15.0)
+        self.assertEqual(self.perceptron.fire(np.array([3.0, 4.0, 5.0])), 1.0)
+
+    def test_04(self):
+        self.perceptron = Perceptron()
+        self.assertEqual(self.perceptron.fire(np.array([1.0, -1.0])), -1.0)
 
 # Main
 #-------------------------
