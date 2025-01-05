@@ -65,7 +65,6 @@ class TestPerceptron(unittest.TestCase):
         self.assertEqual(weights[1], new_weights[1])
         self.assertEqual(weights[2], new_weights[2])
 
-
     def test_03_set_bias(self):
         p = Perceptron(2)
         p.set_bias(6.9)
